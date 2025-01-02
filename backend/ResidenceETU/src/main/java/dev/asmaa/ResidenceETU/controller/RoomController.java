@@ -86,6 +86,17 @@ public class RoomController {
         return ResponseEntity.ok(room);
     }
 
+
+    @GetMapping("/resident/assigned")
+    public ResponseEntity<Room> getAssignedRoom(@RequestParam Long residentId) {
+        Room room = roomService.getAssignedRoom(residentId);
+        if (room != null) {
+            return ResponseEntity.ok(room);
+        } else {
+            return ResponseEntity.noContent().build();
+        }
+    }
+
     @GetMapping("/capacity")
     public ResponseEntity<Long> getTotalCapacity() {
         long capacity = roomService.getTotalCapacity();

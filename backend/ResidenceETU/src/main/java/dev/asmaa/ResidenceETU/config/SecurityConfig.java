@@ -23,7 +23,7 @@ public class SecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Add CORS configuration here
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/api/auth/register", "/api/auth/login", "/api/rooms/**", "/api/users/**").permitAll()
+                        .requestMatchers("/api/auth/register", "/api/auth/login", "/api/rooms/**", "/api/users/**", "/api/payments/**").permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/resident/**").hasRole("RESIDENT")
                         .anyRequest().authenticated());

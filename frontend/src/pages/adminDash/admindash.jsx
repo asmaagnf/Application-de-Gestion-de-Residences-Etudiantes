@@ -12,25 +12,25 @@ const admindash = () => {
                 <Grid container spacing={3}>
                     <Grid item xs={12} md={3} lg={3}>
                         <StyledPaper>
-                            <img src="" alt="Students" />
+                            <img src="" alt="" />
                             <Title>
                               taux d’occupation
                             </Title>
-                            <Data start={0} end={5000} duration={2.5} prefix="%" />
+                            <Data start={0} end={50} duration={2.5} prefix="%" />
                         </StyledPaper>
                     </Grid>
                     <Grid item xs={12} md={3} lg={3}>
                         <StyledPaper>
-                            <img src="" alt="Classes" />
+                            <img src="" alt="" />
                             <Title>
                             paiements en retard
                             </Title>
-                            <Data start={0} end={2000} duration={5} />
+                            <Data start={0} end={20000} duration={5} />
                         </StyledPaper>
                     </Grid>
                     <Grid item xs={12} md={3} lg={3}>
                         <StyledPaper>
-                            <img src="" alt="Teachers" />
+                            <img src="" alt="" />
                             <Title>
                             incidents en cours
                             </Title>
@@ -39,7 +39,7 @@ const admindash = () => {
                     </Grid>
                     <Grid item xs={12} md={3} lg={3}>
                         <StyledPaper>
-                            <img src="" alt="Fees" />
+                            <img src="" alt="" />
                             <Title>
                                 total resident
                             </Title>

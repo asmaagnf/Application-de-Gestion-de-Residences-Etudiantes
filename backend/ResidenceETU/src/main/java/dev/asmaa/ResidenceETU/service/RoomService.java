@@ -1,10 +1,12 @@
 package dev.asmaa.ResidenceETU.service;
 
+import dev.asmaa.ResidenceETU.model.Payment;
 import dev.asmaa.ResidenceETU.model.Room;
 import dev.asmaa.ResidenceETU.model.RoomStatus;
 import dev.asmaa.ResidenceETU.model.User;
 import dev.asmaa.ResidenceETU.repository.RoomRepository;
 import dev.asmaa.ResidenceETU.repository.UserRepository;
+import dev.asmaa.ResidenceETU.repository.PaymentRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,8 @@ public class RoomService {
     private RoomRepository roomRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private PaymentRepository PaymentRepository;
 
     // Create a new room
     public Room createRoom(String roomNumber, double size, String equipment, double price) {
@@ -67,8 +71,13 @@ public class RoomService {
     }
 
 
+
+    public Room getAssignedRoom(Long residentId) {
+        return roomRepository.findByResident_Id(residentId)
+                .orElse(null); // Return null if no room is assigned
+    }
+
     @Transactional
-    // Assign a resident to a room
     public Room assignResident(Long roomId, Long residentId) {
         // Fetch room and resident by their IDs
         Room room = roomRepository.findById(roomId)
@@ -79,10 +88,25 @@ public class RoomService {
 
         // Assign the resident to the room
         room.setResident(resident);
-        room.setStatus(RoomStatus.OCCUPEE);  // Change room status to OCCUPIED
+        room.setStatus(RoomStatus.OCCUPEE); // Change room status to OCCUPIED
 
-        // Save the updated room with the assigned resident
-        return roomRepository.save(room);
+        // Save the room first
+        Room updatedRoom = roomRepository.save(room);
+
+        // Create initial payment for the resident
+        Payment initialPayment = new Payment(
+                updatedRoom,
+                resident,
+                0.0, // No payment made yet
+                updatedRoom.getPrice(), // Initial balance is the room price
+                updatedRoom.getPrice(), // Total due is the room price
+                new Date(), // Payment date is now
+                new Date(System.currentTimeMillis() + 30L * 24 * 60 * 60 * 1000) // Next due date
+        );
+
+        PaymentRepository.save(initialPayment);
+
+        return updatedRoom;
     }
 
     public Room unassignResident(Long roomId) {

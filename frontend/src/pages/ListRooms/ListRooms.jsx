@@ -167,7 +167,14 @@ const RoomList = () => {
                 <TableCell>{room.size}m</TableCell>
                 <TableCell>{room.equipment}</TableCell>
                 <TableCell>{room.price} DH/mois</TableCell>
-                <TableCell>{room.status}</TableCell>
+                <TableCell style={{
+                    color:
+                      room.status === "DISPONIBLE"
+                        ? "green"
+                        : room.status === "OCCUPEE"
+                        ? "red"
+                        : "grey",
+                  }}>{room.status}</TableCell>
                 <TableCell>
                 {room.residentId ? (
                 <>

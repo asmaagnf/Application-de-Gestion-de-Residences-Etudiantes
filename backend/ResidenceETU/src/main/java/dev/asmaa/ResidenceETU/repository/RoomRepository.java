@@ -15,6 +15,8 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
 
     List<Room> findByResidentIsNull();  // Find all rooms that are not yet assigned to any resident
 
+    Optional<Room> findByResident_Id(Long residentId);
+
     // Compter les chambres disponibles
     long countByStatus(RoomStatus status);
 
