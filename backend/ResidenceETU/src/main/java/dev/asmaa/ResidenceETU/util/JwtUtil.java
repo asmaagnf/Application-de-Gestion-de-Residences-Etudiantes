@@ -16,80 +16,80 @@ import java.util.Date;
 @Service
 public class JwtUtil {
 
-    // Read secret key and expiration time from configuration
-    @Value("${jwt.secret.key}") // Pass a Base64-encoded key
+    // Lire la clé secrète et le temps d'expiration à partir de la configuration
+    @Value("${jwt.secret.key}") // Passer une clé encodée en Base64
     private String secretKey;
 
-    @Value("${jwt.token.expiration}") // Default 10 hours (in milliseconds) if not specified
+    @Value("${jwt.token.expiration}") // Par défaut 10 heures (en millisecondes) si non spécifié
     private Long expirationTime;
 
     private Key signingKey;
 
-    // Initialize the signing key
+    // Initialiser la clé de signature
     @PostConstruct
     public void init() {
-        byte[] keyBytes = Decoders.BASE64.decode(secretKey);
+        byte[] keyBytes = Decoders.BASE64.decode(secretKey); // Décoder la clé secrète
         if (keyBytes.length < 32) {
-            throw new IllegalArgumentException("The secret key is not sufficiently long. Minimum length: 256 bits (32 bytes).");
+            throw new IllegalArgumentException("La clé secrète n'est pas suffisamment longue. Longueur minimale : 256 bits (32 octets).");
         }
-        signingKey = Keys.hmacShaKeyFor(keyBytes);
+        signingKey = Keys.hmacShaKeyFor(keyBytes); // Créer la clé de signature HMAC
     }
 
     /**
-     * Generate a JWT Token with username, role, and userId
+     * Générer un token JWT avec le nom d'utilisateur, le rôle et l'ID utilisateur
      */
     public String generateToken(String username, String role, Long userId) {
         return Jwts.builder()
-                .claim("role", role)          // Add role claim
-                .claim("userId", userId)      // Add userId claim
-                .setSubject(username)         // Add subject (username)
-                .setIssuedAt(new Date(System.currentTimeMillis())) // Issue time
-                .setExpiration(new Date(System.currentTimeMillis() + expirationTime)) // Expiration time
-                .signWith(signingKey, SignatureAlgorithm.HS256) // Sign with key and algorithm
-                .compact(); // Generate token
+                .claim("role", role)          // Ajouter la revendication de rôle
+                .claim("userId", userId)      // Ajouter la revendication d'ID utilisateur
+                .setSubject(username)         // Ajouter le sujet (nom d'utilisateur)
+                .setIssuedAt(new Date(System.currentTimeMillis())) // Heure d'émission
+                .setExpiration(new Date(System.currentTimeMillis() + expirationTime)) // Heure d'expiration
+                .signWith(signingKey, SignatureAlgorithm.HS256) // Signer avec la clé et l'algorithme
+                .compact(); // Générer le token
     }
 
     /**
-     * Extract all claims from a JWT Token
+     * Extraire toutes les revendications d'un token JWT
      */
     public Claims extractClaims(String token) {
         try {
             return Jwts.parserBuilder()
-                    .setSigningKey(signingKey) // Set the signing key
+                    .setSigningKey(signingKey) // Définir la clé de signature
                     .build()
-                    .parseClaimsJws(token)    // Parse the token
-                    .getBody();               // Extract the token body
+                    .parseClaimsJws(token)    // Analyser le token
+                    .getBody();               // Extraire le corps du token
         } catch (JwtException e) {
-            // Log and handle the exception (logging can be added if required)
-            throw new IllegalStateException("Invalid JWT token", e);
+            // Journaliser et gérer l'exception (la journalisation peut être ajoutée si nécessaire)
+            throw new IllegalStateException("Token JWT invalide", e);
         }
     }
 
     /**
-     * Extract the username (subject) from a JWT Token
+     * Extraire le nom d'utilisateur (sujet) d'un token JWT
      */
     public String extractUsername(String token) {
-        return extractClaims(token).getSubject(); // The subject is the username
+        return extractClaims(token).getSubject(); // Le sujet est le nom d'utilisateur
     }
 
     /**
-     * Extract the role from a JWT Token
+     * Extraire le rôle d'un token JWT
      */
     public String extractRole(String token) {
-        return (String) extractClaims(token).get("role"); // Extract "role" claim
+        return (String) extractClaims(token).get("role"); // Extraire la revendication "role"
     }
 
     /**
-     * Extract the userId from a JWT Token
+     * Extraire l'ID utilisateur d'un token JWT
      */
     public Long extractUserId(String token) {
-        return ((Number) extractClaims(token).get("userId")).longValue(); // Extract "userId" claim
+        return ((Number) extractClaims(token).get("userId")).longValue(); // Extraire la revendication "userId"
     }
 
     /**
-     * Check if a JWT Token is expired
+     * Vérifier si un token JWT est expiré
      */
     public boolean isTokenExpired(String token) {
-        return extractClaims(token).getExpiration().before(new Date()); // Compare expiration date
+        return extractClaims(token).getExpiration().before(new Date()); // Comparer la date d'expiration
     }
 }

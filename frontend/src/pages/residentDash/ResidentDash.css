@@ -1,0 +1,67 @@
+.resident-dashboard {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f4;
+    padding: 20px;
+    color: #333;
+  }
+  
+  .welcome-section {
+    text-align: center;
+    margin-bottom: 30px;
+    background-color: #4CAF50;
+    color: white;
+    padding: 20px;
+    border-radius: 8px;
+  }
+  
+  .content-section {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  h2 {
+    color: #4CAF50;
+  }
+  
+  .announcements {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .announcements li {
+    background-color: #e7f3fe;
+    border-left: 6px solid #2196F3;
+    margin: 10px 0;
+    padding: 10px;
+    border-radius: 4px;
+  }
+  
+  .quick-links {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    margin-top: 20px;
+  }
+  
+  .link {
+    background-color: #2196F3;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background-color 0.3s;
+  }
+  
+  .link:hover {
+    background-color: #1976D2;
+  }
+  
+  .footer {
+    text-align: center;
+    margin-top: 30px;
+    font-size: 0.9em;
+    color: #777;
+  }
+  

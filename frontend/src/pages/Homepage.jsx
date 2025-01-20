@@ -10,41 +10,42 @@ const Homepage = () => {
         <StyledContainer>
             <Grid container spacing={0}>
                 <Grid item xs={12} md={6}>
-                    <img src={Students} alt="students" style={{ width: '100%' }} />
+                    <img src={Students} alt="étudiants" style={{ width: '100%' }} />
                 </Grid>
                 <Grid item xs={12} md={6}>
                     <StyledPaper elevation={3}>
                         <StyledTitle>
-                            Welcome to
+                            Bienvenue à
                             <br />
-                            School Management
+                            l'Application de
                             <br />
-                            System
+                            Gestion des Résidences Étudiantes
                         </StyledTitle>
                         <StyledText>
-                            Streamline school management, class organization, and add students and faculty.
-                            Seamlessly track attendance, assess performance, and provide feedback.
-                            Access records, view marks, and communicate effortlessly.
+                            Gérez facilement votre expérience de résidence ! 
+                            Consultez vos informations de chambre, soumettez des requêtes de maintenance, et accédez à vos paiements.
+                            Restez informé des annonces et événements importants.
                         </StyledText>
                         
                         <StyledBox>
                             <div>
-                            <StyledLink to="/login">
-                                <LightPurpleButton variant="contained" fullWidth>
-                                    Login
-                                </LightPurpleButton>
-                            </StyledLink>
-                            <StyledLink to="/register">
-                                <Button variant="outlined" fullWidth
-                                    sx={{ mt: 2, mb: 3, color: "#7f56da", borderColor: "#7f56da" }}
-                                >
-                                    Sign up
-                                </Button>
-                            </StyledLink></div>
+                                <StyledLink to="/login">
+                                    <LightPurpleButton variant="contained" fullWidth>
+                                        Connexion
+                                    </LightPurpleButton>
+                                </StyledLink>
+                                <StyledLink to="/register">
+                                    <Button variant="outlined" fullWidth
+                                        sx={{ mt: 2, mb: 3, color: "#7f56da", borderColor: "#7f56da" }}
+                                    >
+                                        Inscription
+                                    </Button>
+                                </StyledLink>
+                            </div>
                             <StyledText>
-                                Don't have an account?{' '}
+                                Vous n'avez pas de compte ?{' '}
                                 <Link to="/register" style={{color:"#550080"}}>
-                                    Sign up
+                                    Inscrivez-vous
                                 </Link>
                             </StyledText>
                         </StyledBox>
@@ -73,7 +74,7 @@ const StyledBox = styled(Box)`
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content:center;
+  justify-content: center;
   gap: 16px;
   padding: 24px;
 `;
@@ -81,7 +82,6 @@ const StyledBox = styled(Box)`
 const StyledTitle = styled.h1`
   font-size: 3rem;
   color: #252525;
-  /* font-family: "Manrope"; */
   font-weight: bold;
   padding-top: 0;
   letter-spacing: normal;
@@ -89,7 +89,6 @@ const StyledTitle = styled.h1`
 `;
 
 const StyledText = styled.p`
-  /* color: #550080; */
   margin-top: 30px;
   margin-bottom: 30px; 
   letter-spacing: normal;

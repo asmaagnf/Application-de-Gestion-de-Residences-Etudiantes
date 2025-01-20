@@ -37,7 +37,7 @@ const HeaderAdmin = ({ showServiceOption }) => {
              <NavLink to="/resident-dash/ListRooms">votre chambres</NavLink>
              <NavLink to="/resident-dash/paiement">historique paiements</NavLink>
              <NavLink to="/resident-dash/profil">votre profil</NavLink>
-             <NavLink to="/resident-dash/resident">incident</NavLink>
+             <NavLink to="/resident-dash/incident">incident</NavLink>
              <button
             className="button"
             onClick={handleLogout}

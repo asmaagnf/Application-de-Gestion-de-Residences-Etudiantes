@@ -10,19 +10,16 @@ export const loginUser = (loginData) => {
   return axios.post(`${API_URL}/auth/login`, loginData);
 };
 
-export const getPaymentsByResident = async (residentId) => {
-  const response = await axios.get(`${API_URL}/payments/resident/${residentId}`);
-  return response.data;
+// Fetch payments by Resident ID
+export const getPaymentsByResident = (residentId) => {
+  return axios.get(`${API_URL}/payments/resident/${residentId}`);
 };
 
-export const getPaymentsByRoom = async (roomId) => {
-  const response = await axios.get(`${API_URL}/payments/room/${roomId}`);
-  return response.data;
-};
-
-export const addPayment = async (roomId, residentId, amountPaid) => {
-  const response = await axios.post(`${API_URL}/payments`, null, {
-    params: { roomId, residentId, amountPaid },
+// Add payment
+export const addPayment = (paymentId, amountPaid) => {
+  return axios.post(`${API_URL}/payments/${paymentId}/pay`, null, {
+    params: {
+      amountPaid: amountPaid,
+    },
   });
-  return response.data;
 };

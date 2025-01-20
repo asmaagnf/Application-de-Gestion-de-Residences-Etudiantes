@@ -1,5 +1,6 @@
 package dev.asmaa.ResidenceETU.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.util.Date;
 
@@ -10,59 +11,35 @@ public class Payment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "room_id", nullable = false)
-    private Room room;
-
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "resident_id", nullable = false)
     private User resident;
 
-    private double amountPaid;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "room_id", nullable = false)
+    @JsonIgnore
+    private Room room;
 
-    private double balance;
-
-    private double totalDue;
-
-    @Temporal(TemporalType.DATE)
-    private Date paymentDate;
-
-    @Temporal(TemporalType.DATE)
-    private Date dueDate;
-
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date updatedAt;
-
-    @Column(length = 500)
-    private String receipt; // Path or details for receipt
+    private double amountDue; // Monthly rent
+    private double amountPaid; // Amount paid
+    private Date dueDate; // Payment due date
+    private boolean isPaid; // Payment status
+    private Date paymentDate; // Date of payment (if paid)
 
     public Payment() {}
 
-    public Payment(Room room, User resident, double amountPaid, double balance, double totalDue, Date paymentDate, Date dueDate) {
-        this.room = room;
+    public Payment(User resident, Room room, double amountDue, Date dueDate) {
         this.resident = resident;
-        this.amountPaid = amountPaid;
-        this.balance = balance;
-        this.totalDue = totalDue;
-        this.paymentDate = paymentDate;
+        this.room = room;
+        this.amountDue = amountDue;
         this.dueDate = dueDate;
+        this.amountPaid = 0.0;
+        this.isPaid = false;
     }
 
     // Getters and Setters
     public Long getId() {
         return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Room getRoom() {
-        return room;
-    }
-
-    public void setRoom(Room room) {
-        this.room = room;
     }
 
     public User getResident() {
@@ -73,36 +50,28 @@ public class Payment {
         this.resident = resident;
     }
 
+    public Room getRoom() {
+        return room;
+    }
+
+    public void setRoom(Room room) {
+        this.room = room;
+    }
+
+    public double getAmountDue() {
+        return amountDue;
+    }
+
+    public void setAmountDue(double amountDue) {
+        this.amountDue = amountDue;
+    }
+
     public double getAmountPaid() {
         return amountPaid;
     }
 
     public void setAmountPaid(double amountPaid) {
         this.amountPaid = amountPaid;
-    }
-
-    public double getBalance() {
-        return balance;
-    }
-
-    public void setBalance(double balance) {
-        this.balance = balance;
-    }
-
-    public double getTotalDue() {
-        return totalDue;
-    }
-
-    public void setTotalDue(double totalDue) {
-        this.totalDue = totalDue;
-    }
-
-    public Date getPaymentDate() {
-        return paymentDate;
-    }
-
-    public void setPaymentDate(Date paymentDate) {
-        this.paymentDate = paymentDate;
     }
 
     public Date getDueDate() {
@@ -113,18 +82,19 @@ public class Payment {
         this.dueDate = dueDate;
     }
 
-    public String getReceipt() {
-        return receipt;
+    public boolean isPaid() {
+        return isPaid;
     }
 
-    public void setReceipt(String receipt) {
-        this.receipt = receipt;
-    }
-    public Date getUpdatedAt() {
-        return updatedAt;
+    public void setPaid(boolean paid) {
+        isPaid = paid;
     }
 
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
+    public Date getPaymentDate() {
+        return paymentDate;
+    }
+
+    public void setPaymentDate(Date paymentDate) {
+        this.paymentDate = paymentDate;
     }
 }

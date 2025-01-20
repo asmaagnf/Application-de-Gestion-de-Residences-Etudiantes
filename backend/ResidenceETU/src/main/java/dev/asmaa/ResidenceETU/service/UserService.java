@@ -14,35 +14,36 @@ import java.util.List;
 public class UserService {
 
     @Autowired
-    private UserRepository userRepository;
+    private UserRepository userRepository; // Injection du dépôt pour les utilisateurs
 
     @Autowired
-    private PasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder; // Injection de l'encodeur de mots de passe
 
-    // Register a new user
+    // Enregistrer un nouvel utilisateur
     @Transactional
     public User registerUser(User user) {
+        // Vérifie si l'email est déjà pris
         if (userRepository.findByEmail(user.getEmail()).isPresent()) {
-            throw new IllegalArgumentException("Email is already taken");
+            throw new IllegalArgumentException("L'email est déjà pris");
         }
 
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return userRepository.save(user);
+        user.setPassword(passwordEncoder.encode(user.getPassword())); // Encode le mot de passe
+        return userRepository.save(user); // Sauvegarde de l'utilisateur dans le dépôt
     }
 
-    // Update an existing user
+    // Mettre à jour un utilisateur existant
     @Transactional
     public User updateUser(Long id, User userUpdate) {
         User existingUser = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found with ID: " + id));
+                .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé avec l'ID : " + id));
 
-        // Update user details
         existingUser.setUsername(userUpdate.getUsername());
         existingUser.setEmail(userUpdate.getEmail());
         existingUser.setContact(userUpdate.getContact());
         existingUser.setRole(userUpdate.getRole());
+        existingUser.setNomEtablissements(userUpdate.getNomEtablissements());
+        existingUser.setCin(userUpdate.getCin());
 
-        // If a new password is provided, encode it and set it
         if (userUpdate.getPassword() != null && !userUpdate.getPassword().isEmpty()) {
             existingUser.setPassword(passwordEncoder.encode(userUpdate.getPassword()));
         }
@@ -50,26 +51,31 @@ public class UserService {
         return userRepository.save(existingUser);
     }
 
-    // Get user by ID
+    // Récupérer un utilisateur par ID
     public User getUserById(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found with ID: " + id));
+                .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé avec l'ID : " + id)); // Recherche de l'utilisateur par ID
     }
 
-    // Get all users
+    // Récupérer tous les utilisateurs
     public List<User> getAllUsers() {
-        return userRepository.findAll();
+        return userRepository.findAll(); // Récupération de tous les utilisateurs
     }
 
+    // Récupérer les résidents
     public List<User> getResidents() {
-        return userRepository.findByRole(Role.RESIDENT);
+        return userRepository.findByRole(Role.RESIDENT); // Recherche des utilisateurs avec le rôle de résident
     }
 
-    // Delete a user by ID
+    // Supprimer un utilisateur par ID
     @Transactional
     public void deleteUser(Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found with ID: " + id));
-        userRepository.delete(user);
+                .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé avec l'ID : " + id)); // Recherche de l'utilisateur
+        userRepository.delete(user); // Suppression de l'utilisateur
+    }
+
+    public long getTotalResidents() {
+        return userRepository.countByRole(Role.RESIDENT); // Compte les utilisateurs avec le rôle de résident
     }
 }

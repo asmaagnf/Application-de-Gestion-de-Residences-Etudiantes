@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { RiDeleteBin5Line } from "react-icons/ri";
+import { FaEdit } from "react-icons/fa";
 import {
   Table,
   TableBody,
@@ -19,9 +21,10 @@ import {
   InputLabel,
   Typography,
   Box,
+  Chip,
 } from "@mui/material";
 import axios from "axios";
-import HeaderAdmin from '../../components/HeaderAdmin/HeaderAdmin'
+import HeaderAdmin from '../../components/HeaderAdmin/HeaderAdmin';
 
 const RoomList = () => {
   const [rooms, setRooms] = useState([]);
@@ -73,24 +76,24 @@ const RoomList = () => {
     setOpenAssignModal(false);
     setSelectedRoomId(null);
     setSelectedResidentId("");
-    fetchRooms(); // Refresh room list after assignment
+    fetchRooms(); // Rafraîchir la liste des chambres après l'assignation
   };
 
   const getResidentName = (residentId) => {
     const resident = residents.find((r) => r.id === residentId);
-    return resident ? resident.username : "Unknown";
+    return resident ? resident.username : "Inconnu";
   };
 
   const handleCreateRoom = async () => {
     await axios.post("http://localhost:8080/api/rooms/create", newRoom);
     setOpenCreateModal(false);
     setNewRoom({ roomNumber: "", size: "", equipment: "", price: "" });
-    fetchRooms(); // Refresh room list after creation
+    fetchRooms(); // Rafraîchir la liste des chambres après la création
   };
 
   const handleDeleteRoom = async (roomId) => {
     await axios.delete(`http://localhost:8080/api/rooms/delete/${roomId}`);
-    fetchRooms(); // Refresh room list after deletion
+    fetchRooms(); // Rafraîchir la liste des chambres après la suppression
   };
 
   const handleUpdateClick = (room) => {
@@ -100,7 +103,6 @@ const RoomList = () => {
       size: room.size,
       equipment: room.equipment,
       price: room.price,
-      status: room.status
     });
     setOpenUpdateModal(true);
   };
@@ -108,126 +110,124 @@ const RoomList = () => {
   const handleUpdateRoom = async () => {
     await axios.put(`http://localhost:8080/api/rooms/update/${selectedRoomId}`, updateRoom);
     setOpenUpdateModal(false);
-    fetchRooms(); // Refresh room list after update
+    fetchRooms(); // Rafraîchir la liste des chambres après la mise à jour
   };
 
   const handleUnassignResident = async (roomId) => {
     try {
       await axios.put(`http://localhost:8080/api/rooms/unassign/${roomId}`);
-      fetchRooms(); // Refresh room list after unassignment
+      fetchRooms(); // Rafraîchir la liste des chambres après la désassignation
     } catch (error) {
-      console.error("Error unassigning resident:", error);
+      console.error("Erreur lors de la désassignation du résident :", error);
+    }
+  };
+
+  const getStatusChip = (status) => {
+    switch (status) {
+      case "DISPONIBLE":
+        return <Chip label="Disponible" color="success" />;
+      case "OCCUPEE":
+        return <Chip label="Occupée" color="error" />;
+      default:
+        return <Chip label="MAINTENANCE" color="default" />;
     }
   };
 
   return (
-    <div >
+    <div>
       <HeaderAdmin />
-      <Typography variant="h4" sx={{ mb: 2, mt:2 }}>
-        Manage Rooms
+      <Typography variant="h4" sx={{ mb: 2, mt: 2 }}>
+        Gérer les Chambres
       </Typography>
-      <Box sx={{  display: "flex", gap: 2, margin:3 }}>
+      <Box sx={{ display: "flex", gap: 2, margin: 3 }}>
         <TextField
-          label="Search by Room Number"
+          label="Rechercher par Numéro de Chambre"
           variant="outlined"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           fullWidth
         />
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={() => setOpenCreateModal(true)}
-       
-      >
-        Create Room
-      </Button>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => setOpenCreateModal(true)}
+        >
+          Créer une Chambre
+        </Button>
       </Box>
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Room Number</TableCell>
-              <TableCell>Size</TableCell>
-              <TableCell>Equipment</TableCell>
-              <TableCell>price</TableCell>
-              <TableCell>Status</TableCell>
-              <TableCell>Assigned Resident</TableCell>
+              <TableCell>Numéro de Chambre</TableCell>
+              <TableCell>Taille</TableCell>
+              <TableCell>Équipement</TableCell>
+              <TableCell>Prix</TableCell>
+              <TableCell>Statut</TableCell>
+              <TableCell>Résident Assigné</TableCell>
               <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-          {rooms
+            {rooms
               .filter((room) =>
                 room.roomNumber.toString().toLowerCase().includes(search.toLowerCase())
               )
               .map((room) => (
-              <TableRow key={room.id}>
-                <TableCell>{room.roomNumber}</TableCell>
-                <TableCell>{room.size}m</TableCell>
-                <TableCell>{room.equipment}</TableCell>
-                <TableCell>{room.price} DH/mois</TableCell>
-                <TableCell style={{
-                    color:
-                      room.status === "DISPONIBLE"
-                        ? "green"
-                        : room.status === "OCCUPEE"
-                        ? "red"
-                        : "grey",
-                  }}>{room.status}</TableCell>
-                <TableCell>
-                {room.residentId ? (
-                <>
-                {getResidentName(room.residentId)}
-               <Button
-               variant="outlined"
-               onClick={() => handleUnassignResident(room.id)}
-              style={{ marginLeft: "10px" }}
-               >
-               Unassign
-              </Button>
-              </>
-              ) : (
-             "None"
-             )}
-            </TableCell>
-                <TableCell>
-                  <Button
-                    variant="contained"
-                    
-                    onClick={() => handleAssignClick(room.id)}
-                  >
-                    Assign Resident
-                  </Button>
-                  <Button
-                    variant="contained"
-                    
-                    onClick={() => handleDeleteRoom(room.id)}
-                    style={{ marginLeft: "10px" }}
-                  >
-                    Delete
-                  </Button>
-                  <Button
-                    variant="contained"
+                <TableRow key={room.id}>
+                  <TableCell>{room.roomNumber}</TableCell>
+                  <TableCell>{room.size} m</TableCell>
+                  <TableCell>{room.equipment}</TableCell>
+                  <TableCell>{room.price} DH/mois</TableCell>
+                  <TableCell>{getStatusChip(room.status)}</TableCell>
+                  <TableCell>
+                    {room.residentId ? (
+                      <>
+                        <Chip label={getResidentName(room.residentId)} />
+                        <Button
+                          variant="outlined"
+                          onClick={() => handleUnassignResident(room.id)}
+                          style={{ marginLeft: "10px" }}
+                        >
+                          Désassigner
+                        </Button>
+                      </>
+                    ) : (
+                      "Aucun"
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    <Button
+                      variant="contained"
+                      onClick={() => handleAssignClick(room.id)}
+                    >
+                      Assigner Résident
+                    </Button>
+                    <RiDeleteBin5Line
+                      variant="contained"
+                      onClick={() => handleDeleteRoom(room.id)}
+                      style={{ color: "red", marginLeft: "15px" }}
+                    />
+                     
+                    <FaEdit
+                      variant="contained"
+                      onClick={() => handleUpdateClick(room)}
+                      style={{ color: "green", marginLeft: "15px" }}
                    
-                    onClick={() => handleUpdateClick(room)}
-                    style={{ marginLeft: "10px" }}
-                  >
-                    Update
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
+                      />
+                  </TableCell>
+                </TableRow>
+              ))}
           </TableBody>
         </Table>
       </TableContainer>
 
-      {/* Assign Resident Modal */}
+      {/* Modal d'Assignation de Résident */}
       <Dialog open={openAssignModal} onClose={() => setOpenAssignModal(false)}>
-        <DialogTitle>Assign Resident to Room</DialogTitle>
+        <DialogTitle>Assigner un Résident à la Chambre</DialogTitle>
         <DialogContent>
           <FormControl fullWidth>
-            <InputLabel>Select Resident</InputLabel>
+            <InputLabel>Sélectionner le Résident</InputLabel>
             <Select
               value={selectedResidentId}
               onChange={(e) => setSelectedResidentId(e.target.value)}
@@ -241,20 +241,20 @@ const RoomList = () => {
           </FormControl>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpenAssignModal(false)}>Cancel</Button>
-          <Button onClick={handleAssignResident} variant="contained" >
-            Assign
+          <Button onClick={() => setOpenAssignModal(false)}>Annuler</Button>
+          <Button onClick={handleAssignResident} variant="contained">
+            Assigner
           </Button>
         </DialogActions>
       </Dialog>
 
-      {/* Create Room Modal */}
+      {/* Modal de Création de Chambre */}
       <Dialog open={openCreateModal} onClose={() => setOpenCreateModal(false)}>
-        <DialogTitle>Create New Room</DialogTitle>
+        <DialogTitle>Créer une Nouvelle Chambre</DialogTitle>
         <DialogContent>
           <TextField
             margin="dense"
-            label="Room Number"
+            label="Numéro de Chambre"
             type="text"
             fullWidth
             value={newRoom.roomNumber}
@@ -262,7 +262,7 @@ const RoomList = () => {
           />
           <TextField
             margin="dense"
-            label="Size"
+            label="Taille"
             type="text"
             fullWidth
             value={newRoom.size}
@@ -270,7 +270,7 @@ const RoomList = () => {
           />
           <TextField
             margin="dense"
-            label="Equipment"
+            label="Équipement"
             type="text"
             fullWidth
             value={newRoom.equipment}
@@ -278,7 +278,7 @@ const RoomList = () => {
           />
           <TextField
             margin="dense"
-            label="Price"
+            label="Prix"
             type="number"
             fullWidth
             value={newRoom.price}
@@ -286,20 +286,20 @@ const RoomList = () => {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpenCreateModal(false)}>Cancel</Button>
-          <Button onClick={handleCreateRoom} variant="contained" >
-            Create
+          <Button onClick={() => setOpenCreateModal(false)}>Annuler</Button>
+          <Button onClick={handleCreateRoom} variant="contained">
+            Créer
           </Button>
         </DialogActions>
       </Dialog>
 
-      {/* Update Room Modal */}
+      {/* Modal de Mise à Jour de Chambre */}
       <Dialog open={openUpdateModal} onClose={() => setOpenUpdateModal(false)}>
-        <DialogTitle>Update Room</DialogTitle>
+        <DialogTitle>Mettre à Jour la Chambre</DialogTitle>
         <DialogContent>
           <TextField
             margin="dense"
-            label="Room Number"
+            label="Numéro de Chambre"
             type="text"
             fullWidth
             value={updateRoom.roomNumber}
@@ -307,7 +307,7 @@ const RoomList = () => {
           />
           <TextField
             margin="dense"
-            label="Size"
+            label="Taille"
             type="text"
             fullWidth
             value={updateRoom.size}
@@ -315,7 +315,7 @@ const RoomList = () => {
           />
           <TextField
             margin="dense"
-            label="Equipment"
+            label="Équipement"
             type="text"
             fullWidth
             value={updateRoom.equipment}
@@ -323,7 +323,7 @@ const RoomList = () => {
           />
           <TextField
             margin="dense"
-            label="Price"
+            label="Prix"
             type="number"
             fullWidth
             value={updateRoom.price}
@@ -331,9 +331,9 @@ const RoomList = () => {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpenUpdateModal(false)}>Cancel</Button>
-          <Button onClick={handleUpdateRoom} variant="contained" >
-            Update
+          <Button onClick={() => setOpenUpdateModal(false)}>Annuler</Button>
+          <Button onClick={handleUpdateRoom} variant="contained">
+            Mettre à Jour
           </Button>
         </DialogActions>
       </Dialog>

@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { Button, TextField, Box, Typography, Grid, CssBaseline, Paper } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { registerUser } from "../utils/api";
+import { useNavigate  } from 'react-router-dom';
+import signinimage from "../assets/signinimg.png";
 
 const defaultTheme = createTheme();
 
@@ -10,8 +12,11 @@ const Register = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [contact, setContact] = useState("");
+  const [nomEtablissements, setNomEtablissements] = useState(""); // New state for nomEtablissements
+  const [cin, setCin] = useState(""); // New state for cin
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -19,8 +24,10 @@ const Register = () => {
     setSuccess("");
 
     try {
-      await registerUser({ username, email, password, contact });
+      // Send the new fields along with the other data
+      await registerUser({ username, email, password, contact, nomEtablissements, cin });
       setSuccess("Registration successful! You can now log in.");
+      navigate("/login");
     } catch (err) {
       setError("Registration failed. Please try again.");
     }
@@ -99,13 +106,34 @@ const Register = () => {
                 value={contact}
                 onChange={(e) => setContact(e.target.value)}
               />
+              {/* New fields */}
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                id="nomEtablissements"
+                label="Enter Institution Name"
+                name="nomEtablissements"
+                value={nomEtablissements}
+                onChange={(e) => setNomEtablissements(e.target.value)}
+              />
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                id="cin"
+                label="Enter CIN"
+                name="cin"
+                value={cin}
+                onChange={(e) => setCin(e.target.value)}
+              />
               {error && (
-                <Typography color="error" variant="body2">
+                <Typography color="red" variant="body2">
                   {error}
                 </Typography>
               )}
               {success && (
-                <Typography color="success" variant="body2">
+                <Typography color="green" variant="body2">
                   {success}
                 </Typography>
               )}
@@ -120,30 +148,21 @@ const Register = () => {
             </Box>
           </Box>
         </Grid>
-        <Grid
+     
+          <Grid
           item
           xs={false}
           sm={6}
           md={7}
           sx={{
-            backgroundColor: "#f5f5f5",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
+            backgroundImage: `url(${signinimage})`,
+            backgroundRepeat: "no-repeat",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            height: "100%",
           }}
-        >
-          <Typography
-            variant="h3"
-            sx={{
-              color: "#2c2143",
-              fontWeight: "bold",
-              textAlign: "center",
-              px: 4,
-            }}
-          >
-            Welcome to Our Community
-          </Typography>
-        </Grid>
+          />
+        
       </Grid>
     </ThemeProvider>
   );

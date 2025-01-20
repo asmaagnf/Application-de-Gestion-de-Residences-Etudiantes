@@ -3,7 +3,9 @@ package dev.asmaa.ResidenceETU.controller;
 import dev.asmaa.ResidenceETU.model.Payment;
 import dev.asmaa.ResidenceETU.service.PaymentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,52 +18,45 @@ public class PaymentController {
     @Autowired
     private PaymentService paymentService;
 
-    /**
-     * Add a payment for a resident's room.
-     * Updates the resident's total due and balance.
-     */
-    @PostMapping
-    public ResponseEntity<?> addPayment(
-            @RequestParam Long roomId,
-            @RequestParam Long residentId,
-            @RequestParam double amountPaid) {
+
+    @GetMapping("/resident/history/{residentId}")
+    public List<Payment> getPaymentsByResident(@PathVariable Long residentId) {
+        return paymentService.getResidentPayments(residentId);
+    }
+
+    @PostMapping("/{paymentId}/pay")
+    public ResponseEntity<?> processPayment(@PathVariable Long paymentId, @RequestParam double amountPaid) {
+        paymentService.processPayment(paymentId, amountPaid);
+        return ResponseEntity.ok("Payment processed successfully");
+    }
+
+    @GetMapping("/overdue")
+    public List<Payment> getOverduePayments() {
+        return paymentService.getOverduePayments();
+    }
+    @GetMapping("/resident/{username}")
+    public List<Payment> getPaymentsByUsername(@PathVariable String username) {
+        return paymentService.getResidentPaymentsByUsername(username);
+    }
+    @GetMapping("/receipt/{paymentId}")
+    public ResponseEntity<byte[]> downloadReceipt(@PathVariable Long paymentId) {
+        Payment payment = paymentService.getPaymentById(paymentId); // Fetch the payment record by ID
+
         try {
-            Payment payment = paymentService.addPayment(roomId, residentId, amountPaid);
-            return ResponseEntity.ok(payment);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
-    }
 
-    /**
-     * Retrieve all payments for a specific resident.
-     */
-    @GetMapping("/resident/{residentId}")
-    public ResponseEntity<List<Payment>> getPaymentsByResident(@PathVariable Long residentId) {
-        List<Payment> payments = paymentService.getPaymentsByResident(residentId);
-        return ResponseEntity.ok(payments);
-    }
+            byte[] receipt = paymentService.generateReceipt(payment); // Generate PDF receipt
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Content-Disposition", "attachment; filename=payment_receipt.pdf");
 
-    /**
-     * Retrieve all payments for a specific room.
-     */
-    @GetMapping("/room/{roomId}")
-    public ResponseEntity<List<Payment>> getPaymentsByRoom(@PathVariable Long roomId) {
-        List<Payment> payments = paymentService.getPaymentsByRoom(roomId);
-        return ResponseEntity.ok(payments);
-    }
-
-    /**
-     * Endpoint to force update total due for all residents (optional).
-     * Useful for testing scheduled tasks manually.
-     */
-    @PostMapping("/update-total-due")
-    public ResponseEntity<?> updateTotalDue() {
-        try {
-            paymentService.updateTotalDueForAllResidents();
-            return ResponseEntity.ok("Total due updated for all residents.");
+            // Return the receipt as a downloadable file
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .contentType(MediaType.APPLICATION_PDF)
+                    .body(receipt);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
 }
+

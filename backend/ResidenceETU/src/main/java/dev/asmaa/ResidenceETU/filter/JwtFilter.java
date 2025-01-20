@@ -18,28 +18,31 @@ import org.springframework.lang.NonNull;
 public class JwtFilter extends OncePerRequestFilter {
 
     @Autowired
-    private JwtUtil jwtUtil;
+    private JwtUtil jwtUtil; // Injection de l'utilitaire JWT
 
     @Override
     protected void doFilterInternal(
-            @NonNull HttpServletRequest request,
-            @NonNull HttpServletResponse response,
-            @NonNull FilterChain chain
+            @NonNull HttpServletRequest request, // Requête HTTP
+            @NonNull HttpServletResponse response, // Réponse HTTP
+            @NonNull FilterChain chain // Chaîne de filtres
     )
             throws ServletException, IOException {
-        String authorizationHeader = request.getHeader("Authorization");
+        String authorizationHeader = request.getHeader("Authorization"); // Récupération de l'en-tête d'autorisation
 
+        // Vérifie si l'en-tête d'autorisation est présent et commence par "Bearer "
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            String token = authorizationHeader.substring(7);
-            String username = jwtUtil.extractUsername(token);
+            String token = authorizationHeader.substring(7); // Extraction du token (en retirant "Bearer ")
+            String username = jwtUtil.extractUsername(token); // Extraction du nom d'utilisateur à partir du token
 
+            // Vérifie si le nom d'utilisateur est non nul et si l'authentification n'est pas déjà définie
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                // Création d'un token d'authentification
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                        username, null, null); // Add roles if needed
-                SecurityContextHolder.getContext().setAuthentication(authToken);
+                        username, null, null);
+                SecurityContextHolder.getContext().setAuthentication(authToken); // Définit l'authentification dans le contexte de sécurité
             }
         }
 
-        chain.doFilter(request, response);
+        chain.doFilter(request, response); // Poursuit la chaîne de filtres
     }
 }

@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import {jwtDecode} from "jwt-decode";
-import HeaderResident from '../../components/HeaderResident/HeaderResident'
+import { jwtDecode } from "jwt-decode";
+import HeaderResident from '../../components/HeaderResident/HeaderResident';
 import { MdOutlineMail } from "react-icons/md";
 import { FaRegUser } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { Dialog, DialogActions, DialogContent, DialogTitle, Button, TextField } from "@mui/material";
+
 
 const ResidentProfile = () => {
   const [user, setUser] = useState(null);
@@ -14,6 +15,8 @@ const ResidentProfile = () => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [contact, setContact] = useState("");
+  const [nomEtablissements, setNomEtablissements] = useState("");
+  const [cin, setCin] = useState("");
   const [password, setPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const navigate = useNavigate();
@@ -30,6 +33,8 @@ const ResidentProfile = () => {
         setUsername(response.data.username);
         setEmail(response.data.email);
         setContact(response.data.contact);
+        setNomEtablissements(response.data.nomEtablissements); // Added field
+        setCin(response.data.cin); // Added field
       } catch (error) {
         console.error("Error fetching user:", error);
       }
@@ -49,6 +54,8 @@ const ResidentProfile = () => {
         username,
         email,
         contact,
+        nomEtablissements, // Added field
+        cin, // Added field
       };
 
       await axios.put(`http://localhost:8080/api/users/update/${userId}`, updatedUser);
@@ -112,13 +119,13 @@ const ResidentProfile = () => {
           <div style={styles.accountSidebar}>
             <h2 style={styles.sidebarTitle}>Votre Compte</h2>
             <ul style={styles.sidebarList}>
-              <li>
+              <li style={{marginBottom:'50px'}}>
                 <a href="#profile" style={styles.sidebarLink}>Profil</a>
               </li>
-              <li>
+              <li style={{marginBottom:'50px'}}>
                 <a href="#password" style={styles.sidebarLink} onClick={() => setIsPasswordModalOpen(true)}>Changer Password</a>
               </li>
-              <li>
+              <li >
                 <a href="#delete-account" style={styles.sidebarLink} onClick={handleDeleteUser}>Supprimer Compte</a>
               </li>
             </ul>
@@ -130,9 +137,11 @@ const ResidentProfile = () => {
             </div>
             <div style={styles.accountInfo}>
               <div style={styles.accountDetails}>
-                <p><FaRegUser /> {user.username}</p>
-                <p><MdOutlineMail /> {user.email}</p>
-                <p>Contact: {user.contact}</p>
+                <p style={{marginBottom:'20px'}}><FaRegUser />  {user.username}</p>
+                <p style={{marginBottom:'20px'}}><MdOutlineMail />  {user.email}</p>
+                <p style={{marginBottom:'20px'}}><b>Contact:</b> {user.contact}</p>
+                <p style={{marginBottom:'20px'}}><b>Nom de l'Établissement:</b> {user.nomEtablissements}</p> {/* Display new field */}
+                <p style={{marginBottom:'20px'}}><b>CIN:</b> {user.cin}</p> {/* Display new field */}
               </div>
             </div>
             <button style={styles.logoutButton} onClick={handleLogout}>Se Déconnecter</button>
@@ -163,6 +172,20 @@ const ResidentProfile = () => {
             label="Contact"
             value={contact}
             onChange={(e) => setContact(e.target.value)}
+            fullWidth
+            margin="normal"
+          />
+          <TextField
+            label="Nom de l'Établissement"
+            value={nomEtablissements}
+            onChange={(e) => setNomEtablissements(e.target.value)}
+            fullWidth
+            margin="normal"
+          />
+          <TextField
+            label="CIN"
+            value={cin}
+            onChange={(e) => setCin(e.target.value)}
             fullWidth
             margin="normal"
           />
@@ -202,6 +225,7 @@ const ResidentProfile = () => {
     </div>
   );
 };
+
 
 const styles = {
   
@@ -265,7 +289,7 @@ const styles = {
    
     accountDetails: {
       p: {
-        margin: '10px 0',
+        marginBottom:'20px',
       },
     },
     logoutButton: {

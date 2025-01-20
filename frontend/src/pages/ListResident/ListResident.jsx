@@ -18,6 +18,8 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import HeaderAdmin from '../../components/HeaderAdmin/HeaderAdmin';
+import { FaEdit } from "react-icons/fa";
+import { RiDeleteBin5Line } from "react-icons/ri";
 
 const ResidentList = () => {
   const [residents, setResidents] = useState([]);
@@ -29,6 +31,8 @@ const ResidentList = () => {
     username: "",
     contact: "",
     email: "",
+    nomEtablissements: "",
+    cin: "",
     role: "RESIDENT",
     password: "",
   });
@@ -36,9 +40,10 @@ const ResidentList = () => {
     username: "",
     contact: "",
     email: "",
+    nomEtablissements: "",
+    cin: "",
     role: "RESIDENT",
     password: "",
-
   });
 
   useEffect(() => {
@@ -50,7 +55,7 @@ const ResidentList = () => {
       const response = await axios.get("http://localhost:8080/api/users/list");
       setResidents(response.data);
     } catch (error) {
-      console.error("Error fetching residents:", error);
+      console.error("Erreur lors de la récupération des résidents :", error);
     }
   };
 
@@ -58,10 +63,10 @@ const ResidentList = () => {
     try {
       await axios.post("http://localhost:8080/api/users/register", newUser);
       setOpenCreateModal(false);
-      setNewUser({ username: "", contact: "", email: "", role: "RESIDENT", password: "" });
+      setNewUser({ username: "", contact: "", email: "", nomEtablissements: "", cin: "", role: "RESIDENT", password: "" });
       fetchResidents();
     } catch (error) {
-      console.error("Error creating user:", error);
+      console.error("Erreur lors de la création de l'utilisateur :", error);
     }
   };
 
@@ -70,7 +75,7 @@ const ResidentList = () => {
       await axios.delete(`http://localhost:8080/api/users/delete/${userId}`);
       fetchResidents();
     } catch (error) {
-      console.error("Error deleting user:", error);
+      console.error("Erreur lors de la suppression de l'utilisateur :", error);
     }
   };
 
@@ -80,6 +85,8 @@ const ResidentList = () => {
       username: user.username,
       contact: user.contact,
       email: user.email,
+      nomEtablissements: user.nomEtablissements,
+      cin: user.cin,
       role: user.role || "RESIDENT",
       password: user.password,
     });
@@ -92,7 +99,7 @@ const ResidentList = () => {
       setOpenUpdateModal(false);
       fetchResidents();
     } catch (error) {
-      console.error("Error updating user:", error);
+      console.error("Erreur lors de la mise à jour de l'utilisateur :", error);
     }
   };
 
@@ -100,11 +107,11 @@ const ResidentList = () => {
     <div>
       <HeaderAdmin />
       <Typography variant="h4" sx={{ mb: 2, mt: 2 }}>
-        Manage Residents
+        Gérer les Résidents
       </Typography>
-      <Box sx={{ display: "flex", gap: 2, margin: 3 }}>
+      <Box sx={{ display: "flex", gap: 20, margin: 3 }}>
         <TextField
-          label="Search by Resident Name"
+          label="Rechercher par Nom de Résident"
           variant="outlined"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
@@ -112,19 +119,21 @@ const ResidentList = () => {
         />
         <Button
           variant="contained"
-          color="primary"
+          className="button"
           onClick={() => setOpenCreateModal(true)}
         >
-          Create Resident
+          Créer un Résident
         </Button>
       </Box>
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Resident Name</TableCell>
+              <TableCell>Nom du Résident</TableCell>
               <TableCell>Contact</TableCell>
               <TableCell>Email</TableCell>
+              <TableCell>Nom de l'Établissement</TableCell>
+              <TableCell>CIN</TableCell>
               <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
@@ -138,21 +147,21 @@ const ResidentList = () => {
                   <TableCell>{resident.username}</TableCell>
                   <TableCell>{resident.contact}</TableCell>
                   <TableCell>{resident.email}</TableCell>
+                  <TableCell>{resident.nomEtablissements}</TableCell>
+                  <TableCell>{resident.cin}</TableCell>
                   <TableCell>
-                    <Button
+                    <RiDeleteBin5Line
                       variant="contained"
                       onClick={() => handleDeleteUser(resident.id)}
-                      style={{ marginLeft: "10px" }}
-                    >
-                      Delete
-                    </Button>
-                    <Button
+                      style={{color: "red", marginLeft: "5px" }}
+                    />
+                      
+                   <FaEdit
                       variant="contained"
                       onClick={() => handleUpdateClick(resident)}
-                      style={{ marginLeft: "10px" }}
-                    >
-                      Update
-                    </Button>
+                      style={{color: "green", marginLeft: "20px" }}
+                    />
+                      
                   </TableCell>
                 </TableRow>
               ))}
@@ -160,13 +169,13 @@ const ResidentList = () => {
         </Table>
       </TableContainer>
 
-      {/* Create User Modal */}
+      {/* Modal de Création d'Utilisateur */}
       <Dialog open={openCreateModal} onClose={() => setOpenCreateModal(false)}>
-        <DialogTitle>Create New User</DialogTitle>
+        <DialogTitle>Créer un Nouvel Utilisateur</DialogTitle>
         <DialogContent>
           <TextField
             margin="dense"
-            label="Resident Name"
+            label="Nom du Résident"
             type="text"
             fullWidth
             value={newUser.username}
@@ -190,28 +199,44 @@ const ResidentList = () => {
           />
           <TextField
             margin="dense"
-            label="Password"
+            label="Nom de l'Établissement"
+            type="text"
+            fullWidth
+            value={newUser.nomEtablissements}
+            onChange={(e) => setNewUser({ ...newUser, nomEtablissements: e.target.value })}
+          />
+          <TextField
+            margin="dense"
+            label="CIN"
+            type="text"
+            fullWidth
+            value={newUser.cin}
+            onChange={(e) => setNewUser({ ...newUser, cin: e.target.value })}
+          />
+          <TextField
+            margin="dense"
+            label="Mot de Passe"
             type="password"
             fullWidth
-            value={updateUser.password}
-            onChange={(e) => setUpdateUser({ ...updateUser, password: e.target.value })}
-           />
+            value={newUser.password}
+            onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
+          />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpenCreateModal(false)}>Cancel</Button>
+          <Button onClick={() => setOpenCreateModal(false)}>Annuler</Button>
           <Button onClick={handleCreateUser} variant="contained">
-            Create
+            Créer
           </Button>
         </DialogActions>
       </Dialog>
 
-      {/* Update User Modal */}
+      {/* Modal de Mise à Jour d'Utilisateur */}
       <Dialog open={openUpdateModal} onClose={() => setOpenUpdateModal(false)}>
-        <DialogTitle>Update Resident</DialogTitle>
+        <DialogTitle>Mettre à Jour le Résident</DialogTitle>
         <DialogContent>
           <TextField
             margin="dense"
-            label="Username"
+            label="Nom d'utilisateur"
             type="text"
             fullWidth
             value={updateUser.username}
@@ -233,20 +258,36 @@ const ResidentList = () => {
             value={updateUser.email}
             onChange={(e) => setUpdateUser({ ...updateUser, email: e.target.value })}
           />
-           <TextField
+          <TextField
             margin="dense"
-            label="Password"
+            label="Nom de l'Établissement"
+            type="text"
+            fullWidth
+            value={updateUser.nomEtablissements}
+            onChange={(e) => setUpdateUser({ ...updateUser, nomEtablissements: e.target.value })}
+          />
+          <TextField
+            margin="dense"
+            label="CIN"
+            type="text"
+            fullWidth
+            value={updateUser.cin}
+            onChange={(e) => setUpdateUser({ ...updateUser, cin: e.target.value })}
+          />
+          <TextField
+            margin="dense"
+            label="Mot de Passe"
             type="password"
             fullWidth
-            placeholder="Leave empty to keep the current password"
+            placeholder="Laissez vide pour garder le mot de passe actuel"
             value={updateUser.password}
             onChange={(e) => setUpdateUser({ ...updateUser, password: e.target.value })}
-           />
+          />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpenUpdateModal(false)}>Cancel</Button>
+          <Button onClick={() => setOpenUpdateModal(false)}>Annuler</Button>
           <Button onClick={handleUpdateUser} variant="contained">
-            Update
+            Mettre à Jour
           </Button>
         </DialogActions>
       </Dialog>

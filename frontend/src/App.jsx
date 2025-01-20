@@ -12,6 +12,9 @@ import {jwtDecode} from "jwt-decode";
 import ResidentProfile from './pages/residentDash/ResidentProfile';
 import AdminPayment from './pages/AdminPayment/AdminPayment';
 import ResidentRoom from './pages/ResidentRoom/ResidentRoom';
+import IncidentManagement from './pages/IncidentManagement/IncidentManagement';
+import ReportIncident from './pages/ReportIncident/ReportIncident';
+import PaymentHistory from './pages/PaymentHistory/PaymentHistory';
 
 function App() {
     // Define the ProtectedRoute component
@@ -37,6 +40,8 @@ function App() {
                 <Route path="/resident-dash" element={<Residentdash />} />
                 <Route path="/resident-dash/profil" element={<ResidentProfile />} />
                 <Route path="/resident-dash/ListRooms" element={<ResidentRoom/>} />
+                <Route path="/resident-dash/incident" element={<ReportIncident/>} />
+                <Route path="/resident-dash/paiement" element={<PaymentHistory/>} />
 
 
                 {/* Protected Routes */}
@@ -49,6 +54,7 @@ function App() {
                                 <Route path="ListRooms" element={<ListRooms />} />
                                 <Route path="Resident" element={<ListResident />} />
                                 <Route path="paiement" element={<AdminPayment />} />
+                                <Route path="incidents" element={<IncidentManagement />} />
                             </Routes>
                         </ProtectedRoute>
                     } 
