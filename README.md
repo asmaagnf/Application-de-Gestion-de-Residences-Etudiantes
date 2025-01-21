@@ -1,20 +1,72 @@
-# Application-de-Gestion-de-Residences-etudiantes
-Projet : Application de Gestion de Résidences Étudiantes
+# Application de Gestion de Résidences Étudiantes
 
-Développer une application web de gestion des résidences étudiantes qui permet à l’administration de gérer les chambres, les résidents, les paiements et les requêtes de maintenance. Cette application vise à centraliser les informations pour simplifier la gestion de la résidence.
+Bienvenue dans l'application de gestion de résidences étudiantes. Ce projet a pour objectif de simplifier la gestion des chambres, des résidents et des paiements au sein d'une résidence étudiante.
 
-•	Créer, modifier et supprimer des chambres avec leurs caractéristiques (taille, équipements, disponibilité).
-•	Attribuer des chambres aux étudiants et afficher leur statut (occupée, disponible, en maintenance).
-•	Afficher la capacité d’hébergement et les chambres disponibles.
-•	Inscription des étudiants avec vérification des informations personnelles.
-•	Accès au profil résidant, affichant les informations personnelles, l’historique des paiements et l’état de la chambre attribuée.
-•	Possibilité pour les résidents de mettre à jour leurs informations de contact.
-•	Suivi des paiements de loyer pour chaque étudiant avec détails sur les montants dus, payés, et en retard.
-•	Génération et téléchargement de reçus de paiement.
-•	Notifications de rappel de paiement par e-mail pour les résidents.
-•	Permettre aux résidents de signaler des incidents (problème de plomberie, électricité, etc.).
-•	Gestion des requêtes par l’administration, avec possibilité de les assigner à des techniciens et de suivre leur résolution.
-•	Historique des requêtes de maintenance par résident et par chambre.
-•	Visualisation de statistiques générales (taux d’occupation, paiements en retard, incidents en cours).
-•	Fonction de recherche pour les chambres, les résidents et les requêtes en cours.
-•	Suivi des statistiques de maintenance pour anticiper les besoins en réparations.
+## Fonctionnalités principales
+
+- **Gestion des chambres** : Ajouter, modifier, supprimer et consulter les chambres.
+- **Gestion des résidents** : Assigner et désassigner des résidents aux chambres.
+- **Paiements** : Génération des paiements mensuels, suivi des paiements, et envoi de rappels pour les paiements en retard.
+- **Statistiques** : Obtenir des statistiques sur la capacité totale et les chambres disponibles.
+
+## Technologies utilisées
+
+- **Backend** : Spring Boot (port : 8080)
+- **Frontend** : React.js (port : 5173)
+- **Base de données** : MySQL
+- **Outils de build** : Maven
+- **Frameworks supplémentaires** : Hibernate, Spring Data JPA
+- **Autres bibliothèques** : iText pour la génération de PDF
+
+## Prérequis
+
+Avant de commencer, assurez-vous d'avoir les éléments suivants installés sur votre système :
+
+- Java 17 ou version ultérieure
+- Maven
+- MySQL
+- Node.js et npm
+
+## Installation
+
+### 1. Cloner le dépôt
+
+```bash
+git clone https://github.com/asmaagnf/Application-de-Gestion-de-Residences-Etudiantes
+```
+
+### 2. Configuration de la base de données
+
+Créez une base de données MySQL et mettez à jour les informations de connexion dans le fichier `application.properties` du backend :
+
+```properties
+spring.datasource.url=jdbc:mysql://localhost:3306/residence_etu
+spring.datasource.username=VOTRE_NOM_UTILISATEUR
+spring.datasource.password=VOTRE_MOT_DE_PASSE
+```
+
+### 3. Démarrer le backend
+
+Accédez au répertoire du backend et démarrez le serveur :
+
+```bash
+cd backend/ResidenceETU
+mvn spring-boot:run
+```
+
+Le backend sera disponible sur [http://localhost:8080](http://localhost:8080).
+
+### 4. Démarrer le frontend
+
+Accédez au répertoire du frontend, installez les dépendances et démarrez l'application :
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Le frontend sera disponible sur [http://localhost:5173](http://localhost:5173).
+
+## Auteurs
+- Asmaa Gandaffa
